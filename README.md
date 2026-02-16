@@ -10,8 +10,13 @@ conda activate augment
 ```
 
 ## Usage
-### 1) OpenAI key
-Add your openai API keys in key.txt, one for each line.
+### 1) vLLM endpoint (open-source models)
+Inference uses a local vLLM server. Configure it once:
+
+1. Copy `vllm_config.example.json` to `vllm_config.json` and set `base_url` and `model` to your vLLM server (e.g. `http://localhost:8000/v1`, `google/gemma-2b-it`).
+2. Create `key.txt` in the project root with any single line (e.g. `dummy`); it is not used for auth when using vLLM.
+
+See [VLLM_SETUP.md](VLLM_SETUP.md) for starting the vLLM server (including T4 GPU settings) and for remote server + SSH tunnel. Verify with `python test_vllm_model.py --list-models`.
 
 ### 2) Run scripts
 The running scripts are provided in `runscripts/`. To run our method, please use `run_augment_finqa.py`, `run_augment_tatqa.py`, and `run_augment_wikitq.py`. The output will be stored in `results/` and the performance will be printed.

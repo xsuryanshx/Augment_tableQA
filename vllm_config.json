@@ -1,0 +1,5 @@
+{
+  "base_url": "http://localhost:8000/v1",
+  "model": "google/gemma-2b-it",
+  "dummy_api_key": "not-needed-for-vllm"
+}

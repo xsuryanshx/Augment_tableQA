@@ -1,8 +1,11 @@
 """
 Generate nsql and questions.
+Uses local vLLM endpoint (OpenAI-compatible API) when vllm_config.json is present.
 """
 
 from typing import Dict, List, Union, Tuple
+import json
+import os
 import time
 from tenacity import retry, stop_after_attempt, wait_exponential
 from openai import OpenAI
@@ -10,10 +13,23 @@ from openai import OpenAI
 from generation.prompt import PromptBuilder
 
 
-@retry(stop=stop_after_attempt(6), wait=wait_exponential(multiplier=1, min=4, max=30))
-def call_llm_api(engine, messages, max_tokens, temperature, top_p, n, stop, key):
+def _load_vllm_config(api_key_file: str) -> Dict:
+    """Load vLLM config from vllm_config.json in the same directory as api_key_file."""
+    config_dir = os.path.dirname(os.path.abspath(api_key_file))
+    config_path = os.path.join(config_dir, 'vllm_config.json')
+    if not os.path.isfile(config_path):
+        raise FileNotFoundError(
+            f"vllm_config.json not found at {config_path}. "
+            "Copy vllm_config.example.json to vllm_config.json and set base_url and model."
+        )
+    with open(config_path, 'r') as f:
+        return json.load(f)
 
-    client = OpenAI(api_key=key)
+
+@retry(stop=stop_after_attempt(6), wait=wait_exponential(multiplier=1, min=4, max=30))
+def call_llm_api(engine, messages, max_tokens, temperature, top_p, n, stop, key, base_url: str):
+
+    client = OpenAI(api_key=key, base_url=base_url)
     result = client.chat.completions.create(
         model=engine,
         messages=messages,
@@ -24,7 +40,7 @@ def call_llm_api(engine, messages, max_tokens, temperature, top_p, n, stop, key)
         stop=stop,
         seed=0,
     )
-    
+
     return result
 
 
@@ -37,10 +53,17 @@ class Generator(object):
                  system_prompt_file: str='templates/prompts/default_system.txt'):
         
         self.args = args
-        with open(api_key_file, 'r') as f:
-            keys = [line.strip() for line in f.readlines()]
-        self.keys = keys
-        self.engine = args.engine
+        vllm_config = _load_vllm_config(api_key_file)
+        self.base_url = vllm_config['base_url']
+        self.engine = vllm_config['model']
+        # key.txt can contain dummy value; vLLM ignores it
+        key = vllm_config.get('dummy_api_key', 'dummy')
+        self.keys = [key]
+        if os.path.isfile(api_key_file):
+            with open(api_key_file, 'r') as f:
+                lines = [line.strip() for line in f.readlines() if line.strip()]
+            if lines:
+                self.keys = lines
 
         with open(system_prompt_file, 'r') as f:
             self.system_prompt = f.read()
@@ -129,13 +152,15 @@ class Generator(object):
                 print('\n')
                 print('- - - - - - - - - - ->>')
 
-            # parse api results
+            # parse api results (vLLM and OpenAI chat both use message.content)
             for g in result.choices:
                 try:
-                    if 'code' in self.engine or 'llama' in self.engine:
+                    if hasattr(g, 'message') and g.message is not None:
+                        text = g.message.content
+                    elif hasattr(g, 'text'):
                         text = g.text
                     else:
-                        text = g.message.content
+                        text = str(g)
                     eid_pairs = response_dict.get(eid, None)
                     if eid_pairs is None:
                         eid_pairs = []
@@ -185,7 +210,8 @@ class Generator(object):
             n=n,
             stop=stop,
             key=key,
+            base_url=self.base_url,
         )
-        
-        print('Openai api inference time:', time.time() - start_time)
+
+        print('LLM api inference time:', time.time() - start_time)
         return result
