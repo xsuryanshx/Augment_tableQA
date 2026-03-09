@@ -1,0 +1,56 @@
+Below are some examples:
+
+
+Report:
+management's financial discussion and analysis net revenue 2008 compared to 2007 net revenue consists of operating revenues net of fuel, fuel-related expenses, purchased power expenses, and other regulatory charges. following is an analysis of the change in net revenue comparing 2008 to 2007.
+Tables:
+ | amount (in millions)
+2007 net revenue | 442.3
+volume/weather | 4.6
+reserve equalization | 3.3
+securitization transition charge | 9.1
+fuel recovery | 7.5
+other | 10.1
+2008 net revenue | 440.9
+
+Question: what is the percent change in net revenue between 2007 and 2008?
+Answer: -0.32
+
+
+Report:
+purchases of equity securities during 2014, we repurchased 33035204 shares of our common stock at an average price of $100.24. effective january 1, 2014, our board of directors authorized the repurchase of up to 120 million shares of our common stock by december 31, 2017.
+Tables:
+period | total number of shares purchased | average price per share | total shares purchased as part of public program | maximum shares that may yet be purchased
+oct. 1 through oct. 31 | 3087549 | 107.59 | 3075000 | 92618000
+nov. 1 through nov. 30 | 1877330 | 119.84 | 1875000 | 90743000
+dec. 1 through dec. 31 | 2787108 | 116.54 | 2786400 | 87956600
+total | 7751987 | 113.77 | 7736400 | n/a
+
+Question: what percent of the total 2014 share repurchases were in the fourth quarter?
+Answer: 23.47
+
+
+Report:
+the fair value for these options was estimated at the date of grant using a black-scholes option pricing model. the total fair value of shares vested during 2006, 2005, and 2004 was $9413, $8249, and $6418 respectively.
+Tables:
+ | 2006 | 2005 | 2004
+weighted average fair value of options granted | 20.01 | 9.48 | 7.28
+expected volatility | 0.3534 | 0.3224 | 0.3577
+distribution yield | 0.01 | 0.0098 | 0.013
+expected life of options in years | 6.3 | 6.3 | 6.3
+risk-free interest rate | 0.05 | 0.04 | 0.04
+
+Question: what was the change in total fair value of shares vested from 2005 to 2006?
+Answer: 1164
+
+
+Report:
+contingent acquisition obligations the following table details the estimated future contingent acquisition obligations payable in cash as of december 31, 2009. all payments are contingent upon achieving projected operating performance targets and satisfying other conditions specified in the related agreements.
+Tables:
+ | 2010 | 2011 | 2012 | 2013 | 2014 | thereafter | total
+deferred acquisition payments | 20.5 | 34.8 | 1.2 | 1.1 | 2.1 | 0.3 | 60.0
+redeemable noncontrolling interests | 44.4 | 47.9 | 40.5 | 36.3 | 3.3 | 0.0 | 172.4
+total contingent acquisition payments | 64.9 | 82.7 | 41.7 | 37.4 | 5.4 | 0.3 | 232.4
+
+Question: what percentage of total contingent acquisition payments in 2010 were deferred acquisition payments?
+Answer: 31.59

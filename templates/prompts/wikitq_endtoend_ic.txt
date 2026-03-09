@@ -1,0 +1,94 @@
+Below are some examples:
+
+
+Title: 2018 FIFA World Cup Group A
+team | played | won | drawn | lost | goals for | goals against | points
+uruguay | 3 | 3 | 0 | 0 | 5 | 0 | 9
+russia | 3 | 2 | 0 | 1 | 8 | 4 | 6
+saudi arabia | 3 | 1 | 0 | 2 | 2 | 7 | 3
+egypt | 3 | 0 | 0 | 3 | 2 | 6 | 0
+
+Question: how many teams scored more than 3 goals?
+Answer: 2
+
+
+Title: Highest Mountains in the World
+rank | mountain | height (m) | range | country
+1 | mount everest | 8849 | himalayas | nepal/china
+2 | k2 | 8611 | karakoram | pakistan/china
+3 | kangchenjunga | 8586 | himalayas | nepal/india
+4 | lhotse | 8516 | himalayas | nepal/china
+5 | makalu | 8485 | himalayas | nepal/china
+
+Question: which mountain is the tallest in the karakoram range?
+Answer: k2
+
+
+Title: Academy Award for Best Picture
+year | film | director | studio
+2018 | green book | peter farrelly | universal
+2019 | parasite | bong joon-ho | neon
+2020 | nomadland | chloé zhao | searchlight
+2021 | coda | sian heder | apple
+2022 | everything everywhere all at once | daniel kwan, daniel scheinert | a24
+
+Question: which studio won best picture in 2021?
+Answer: apple
+
+
+Title: US State Populations (2020 Census)
+state | population | area (sq mi) | capital
+california | 39538223 | 163696 | sacramento
+texas | 29145505 | 268596 | austin
+florida | 21538187 | 65758 | tallahassee
+new york | 20201249 | 54555 | albany
+
+Question: what is the capital of texas?
+Answer: austin
+
+
+Title: Quarterly Sales Report
+quarter | revenue ($m) | expenses ($m) | profit ($m)
+q1 2023 | 245 | 180 | 65
+q2 2023 | 310 | 210 | 100
+q3 2023 | 289 | 195 | 94
+q4 2023 | 335 | 225 | 110
+
+Question: what was the total profit for all quarters?
+Answer: 369
+
+
+Title: Olympic 100m Sprint Finals
+athlete | country | time (s) | medal
+usain bolt | jamaica | 9.81 | gold
+justin gatlin | usa | 9.89 | silver
+andre de grasse | canada | 9.91 | bronze
+yohan blake | jamaica | 9.93 | 4th
+jimmy vicaut | france | 10.04 | 5th
+
+Question: which athletes are from jamaica?
+Answer: usain bolt, yohan blake
+
+
+Title: Programming Language Popularity Index
+language | year created | paradigm | rank
+python | 1991 | multi-paradigm | 1
+c | 1972 | procedural | 2
+java | 1995 | object-oriented | 3
+c++ | 1985 | multi-paradigm | 4
+javascript | 1995 | multi-paradigm | 5
+
+Question: is python ranked higher than java?
+Answer: yes
+
+
+Title: City Temperature Records
+city | jan avg (°f) | jul avg (°f) | annual avg (°f)
+phoenix | 54 | 106 | 75
+miami | 68 | 83 | 77
+chicago | 22 | 73 | 49
+seattle | 37 | 65 | 52
+denver | 29 | 73 | 50
+
+Question: what is the difference in july average temperature between phoenix and chicago?
+Answer: 33

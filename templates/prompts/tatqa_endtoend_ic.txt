@@ -1,0 +1,116 @@
+Below are some examples:
+
+
+Report:
+ASSUMPTIONS USED IN STOCK OPTION PRICING MODEL The fair value of options granted was determined using a variation of a binomial option pricing model that takes into account factors specific to the share incentive plans, such as the vesting period.
+Tables:
+ | 2019 | 2018
+weighted average fair value per option granted | 2.34 | 2.13
+weighted average share price | 58 | 57
+weighted average exercise price | 58 | 56
+expected volatility | 14% | 12%
+risk-free interest rate | 2% | 2%
+expected life (years) | 4 | 4
+
+Question: How is the fair value of options granted determined?
+Answer: using a variation of a binomial option pricing model that takes into account factors specific to the share incentive plans, such as the vesting period
+
+
+Report:
+7. Employee numbers and costs The average monthly number of employees (including Executive Directors but excluding third-party contractors) employed by the Group was as follows:
+Tables:
+ | 2019 | 2018
+customer operations | 370 | 380
+product and technology | 317 | 312
+corporate | 115 | 130
+total | 802 | 822
+
+Question: What was the total number of employees in 2019?
+Answer: 802
+
+
+Report:
+NOTE 5 – PROPERTY AND EQUIPMENT Depreciation expense was $80,206 and $58,423 for the years ended December 31, 2019 and 2018, respectively.
+Tables:
+ | 2019 | 2018
+computer equipment | 137763 | 94384
+furniture and fixtures | 187167 | 159648
+subtotal | 324930 | 254032
+less accumulated depreciation | 148916 | 104702
+property and equipment, net | 176014 | 149330
+
+Question: What was the depreciation expense in 2019?
+Answer: 80206
+
+
+Report:
+Depreciation and amortization expense for the years ended April 30, 2019 and 2018 was $2,802,000 and $2,484,000, respectively. Maintenance and repairs charged to operations was approximately $309,000 and $466,000, respectively.
+Tables:
+ | 2019 | 2018
+buildings and building improvements | 2692 | 2790
+machinery, equipment and furniture | 57157 | 57503
+total | 59849 | 60293
+less accumulated depreciation | -46811 | -46166
+net property | 13038 | 14127
+
+Question: What is the change in net property from 2018 to 2019?
+Answer: -1089
+
+
+Report:
+17. Income Taxes Income before income taxes for the Company's domestic and foreign operations was as follows:
+Tables:
+($ in millions) | 2019 | 2018 | 2017
+domestic | 204.2 | 140.3 | 56.0
+foreign | 11.8 | 19.9 | 14.2
+income before income taxes | 216.0 | 160.2 | 70.2
+
+Question: What was the change in foreign income from 2018 to 2019?
+Answer: -8.1
+
+
+Report:
+The following table sets forth the breakdown of revenues by category and segment. Revenue by geography is based on the billing address of the advertiser.
+Tables:
+ | 2019 | 2018
+asia pacific travel | 6274 | 7351
+asia pacific local | 216 | 508
+total asia pacific | 6490 | 7859
+europe travel | 32081 | 30856
+europe local | 4817 | 5293
+total europe | 36898 | 36149
+north america travel | 57863 | 56145
+north america local | 10161 | 11169
+total north america | 68024 | 67314
+total revenues | 111412 | 111322
+
+Question: In 2019, how many geographic regions have total revenues of more than $20,000 thousand?
+Answer: 2
+
+
+Report:
+Effective Income Tax Rate In 2019 and 2018 we had pre-tax losses of $19,573 and $25,403, respectively, which are available for carry forward to offset future taxable income.
+Tables:
+ | december 31, 2018 | december 31, 2019
+united states federal statutory rate | 21% | 21%
+state taxes, net of federal benefit | 1.99% | -0.01%
+valuation allowance | -21.96% | -24.33%
+effective income tax rate | 1.99% | -0.01%
+
+Question: What were the pre-tax losses in 2019?
+Answer: 19573
+
+
+Report:
+11 Intangible assets Internally developed software is capitalised at cost less accumulated amortisation. Amortisation is calculated using the straight-line basis over the asset's useful economic life which is generally two to three years.
+Tables:
+ | rights and licenses | internally generated software | software under development | total
+at 30 june 2019 cost | 13 | 12961 | 16284 | 29259
+accumulated amortisation | 0 | -5580 | 0 | -5580
+net book amount | 13 | 7381 | 16284 | 23678
+at 30 june 2018 cost | 104 | 9555 | 6509 | 16168
+accumulated amortisation | -91 | -3170 | 0 | -3261
+net book amount | 13 | 6385 | 6509 | 12907
+
+Question: What was the total net book amount at 30 june 2019?
+Answer: 23678
