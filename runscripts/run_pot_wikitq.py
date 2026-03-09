@@ -8,7 +8,9 @@ G_TYPE = "pot"
 N_SHOTS = 8
 N_SAMPLE = 1
 TEMPERATURE = 0.0
-ENGINE = 'gpt-3.5-turbo-1106'
+import json
+with open(os.path.join(ROOT_DIR, "vllm_config.json")) as f:
+    ENGINE = json.load(f)["model"]
 API_FILE = "key.txt"
 
 os.system(fr"""{TOKENIZER_FALSE}python {ROOT_DIR}/scripts/execute_pot.py --dataset {DATASET} \

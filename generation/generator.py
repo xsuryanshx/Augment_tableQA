@@ -193,13 +193,17 @@ class Generator(object):
         key = self.keys[self.current_key_id]
         self.current_key_id = (self.current_key_id + 1) % len(self.keys)
         
-        messages = [{"role": "system", "content": self.system_prompt}] if include_system_prompt else []
+        messages = []
+        # Merge system prompt into first user message (for models that don't support system role)
+        system_prefix = f"{self.system_prompt}\n\n" if include_system_prompt and self.system_prompt.strip() else ""
+        
         if isinstance(prompt, str):
-            messages.append({"role": "user", "content": prompt})
+            messages.append({"role": "user", "content": system_prefix + prompt})
         elif isinstance(prompt, list):
             turns = ['user', 'assistant']
             for ind, p in enumerate(prompt):
-                messages.append({"role": turns[ind % 2], "content": p})
+                content = (system_prefix + p) if ind == 0 else p  # Only add system prefix to first message
+                messages.append({"role": turns[ind % 2], "content": content})
         
         result = call_llm_api(
             engine=self.engine,

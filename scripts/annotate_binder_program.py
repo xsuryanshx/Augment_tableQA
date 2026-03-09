@@ -29,11 +29,13 @@ def worker_annotate(
         args,
         g_eids: List,
         dataset,
-        tokenizer
+        tokenizer_name_or_path
 ):
     """
     A worker process for annotating.
     """
+    # Create tokenizer inside worker to avoid pickling issues on macOS
+    tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=tokenizer_name_or_path)
     apifile = args.api_config_file
     generator = Generator(args, api_key_file=apifile, system_prompt_file=args.system_prompt_file)
 
@@ -173,21 +175,22 @@ def main():
     for g_eid in generate_eids:
         generate_eids_group[(int(g_eid) + random.randrange(args.n_processes)) % args.n_processes].append(g_eid)
     print('\n******* Annotating *******')
+    # Pass tokenizer name/path instead of object to avoid pickling issues on macOS
     if 'gpt' in args.engine:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=os.path.join(ROOT_DIR, "utils", "gpt2"))
+        tokenizer_name_or_path = os.path.join(ROOT_DIR, "utils", "gpt2")
     else:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=args.engine)
+        tokenizer_name_or_path = args.engine
     
     g_dict = dict()
     worker_results = []
     if args.debug: 
-        import pdb; pdb.set_trace()
+        # Run without multiprocessing for debugging
         res = worker_annotate(
             0,
             args,
             generate_eids_group[0],
             dataset,
-            tokenizer
+            tokenizer_name_or_path
         )
         g_dict.update(res)
     else:
@@ -198,7 +201,7 @@ def main():
                 args,
                 generate_eids_group[pid],
                 dataset,
-                tokenizer
+                tokenizer_name_or_path
             )))
 
         # Merge annotation results
@@ -209,7 +212,9 @@ def main():
         pool.join()
 
     # Save annotation results
-    with open(os.path.join(args.save_dir, args.output_program_file), 'w') as f:
+    output_path = os.path.join(args.save_dir, args.output_program_file)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as f:
         json.dump(g_dict, f, indent=4)
 
     num_failed = sum([1 for i in g_dict.values() if len(i['generations']) != args.sampling_n])

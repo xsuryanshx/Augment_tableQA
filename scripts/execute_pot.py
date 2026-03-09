@@ -86,13 +86,12 @@ def worker_annotate(
         args,
         g_eids: List,
         dataset,
-        tokenizer
+        tokenizer_name_or_path
 ):
     """
     A worker process for annotating.
     """
-    with open(args.api_config_file, 'r') as f:
-        keys = [line.strip() for line in f.readlines()]
+    tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=tokenizer_name_or_path)
     generator = Generator(args, api_key_file=args.api_config_file)
 
     g_dict = dict()
@@ -133,20 +132,13 @@ def worker_annotate(
             prompt_text = prompt
 
         print(f"Process#{pid}: Building prompt for eid#{g_eid}, original_id#{g_data_item['id']}")
-        messages = [
-            {"role": "user", "content": prompt}
-        ]
-        result = call_chatgpt_api(
-            'gpt-3.5-turbo-1106',
-            messages,
-            max_tokens=256,
-            temperature=0.0,
-            top_p=1,
-            n=1,
-            stop=['\n\n'],
-            key=keys[pid % len(keys)]
+        response_dict = generator.generate_one_pass(
+            prompts=[(g_eid, prompt)],
+            verbose=args.verbose,
+            include_system_prompt=True
         )
-        codes = parse_api_result(result)
+        codes = [text.replace('```python\n', '').replace('```Python\n', '').replace('```PYTHON\n', '').replace('```', '').strip()
+                 for text in response_dict[g_eid]]
         error_msg = ''
         r = codes[0]
         if 'ans =' in r or 'ans=' in r:
@@ -207,20 +199,19 @@ def main():
         generate_eids_group[(int(g_eid) + random.randrange(args.n_processes)) % args.n_processes].append(g_eid)
     print('\n******* Annotating *******')
     if 'gpt' in args.engine:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=os.path.join(ROOT_DIR, "utils", "gpt2"))
+        tokenizer_name_or_path = os.path.join(ROOT_DIR, "utils", "gpt2")
     else:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=args.engine)
+        tokenizer_name_or_path = args.engine
     
     g_dict = dict()
     worker_results = []
     if args.debug: 
-        import pdb; pdb.set_trace()
         res = worker_annotate(
             0,
             args,
             generate_eids_group[0],
             dataset,
-            tokenizer
+            tokenizer_name_or_path
         )
         g_dict.update(res)
     else:
@@ -231,7 +222,7 @@ def main():
                 args,
                 generate_eids_group[pid],
                 dataset,
-                tokenizer
+                tokenizer_name_or_path
             )))
 
         # Merge annotation results

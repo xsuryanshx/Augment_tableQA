@@ -31,11 +31,13 @@ def worker_execute(
         args,
         dataset,
         nsql_dict,
-        tokenizer
+        tokenizer_name_or_path
 ):
     """
     A worker process for execution.
     """
+    # Create tokenizer inside worker to avoid pickling issues on macOS
+    tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=tokenizer_name_or_path)
     result_dict = dict()
     n_total_samples, n_correct_samples = 0, 0
 
@@ -333,19 +335,20 @@ def main():
     result_dict = dict()
     worker_results = []
 
+    # Pass tokenizer name/path instead of object to avoid pickling issues on macOS
     if 'gpt' in args.engine:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=os.path.join(ROOT_DIR, "utils", "gpt2"))
+        tokenizer_name_or_path = os.path.join(ROOT_DIR, "utils", "gpt2")
     else:
-        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=args.engine)
+        tokenizer_name_or_path = args.engine
+    
     if args.debug:
         pid = 0
-        import pdb; pdb.set_trace()
         worker_results = worker_execute(
             pid,
             args,
             dataset,
             nsql_dict_group[pid],
-            tokenizer, 
+            tokenizer_name_or_path, 
         )
         result_dict.update(worker_results)
     else:
@@ -356,7 +359,7 @@ def main():
                 args,
                 dataset,
                 nsql_dict_group[pid],
-                tokenizer
+                tokenizer_name_or_path
             )))
 
         # Merge worker results
@@ -372,7 +375,9 @@ def main():
     print(f'Overall Accuracy: {n_correct_samples}/{len(result_dict)} = {n_correct_samples / len(result_dict)}')
 
     # Save program executions
-    with open(os.path.join(args.save_dir, args.output_program_execution_file), 'w') as f:
+    output_path = os.path.join(args.save_dir, args.output_program_execution_file)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as f:
         json.dump(result_dict, f)
 
     print(f'Done. Elapsed time: {time.time() - start_time}')
