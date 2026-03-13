@@ -22,6 +22,7 @@ from nsql.parser import extract_augmentation_command, extract_sql_query, extract
 from utils.utils import load_data_split, majority_vote, floatify_ans
 from utils.evaluator import Evaluator
 from utils.tatqa_metric import TaTQAEmAndF1
+from utils.relaxed_em import relaxed_em
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "../")
 
@@ -39,7 +40,7 @@ def worker_execute(
     # Create tokenizer inside worker to avoid pickling issues on macOS
     tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=tokenizer_name_or_path)
     result_dict = dict()
-    n_total_samples, n_correct_samples = 0, 0
+    n_total_samples, n_correct_samples, n_relaxed_correct = 0, 0, 0
 
     apifile = args.api_config_file
     print(f"Process#{pid} using API file {apifile}")
@@ -282,11 +283,21 @@ def worker_execute(
         result_dict[eid]['score'] = score
         result_dict[eid]['exec_histories'] = exec_histories
         n_correct_samples += score
-        if score == 1:
-            print(f'Process#{pid}: Correct!')
-        else:
-            print(f'Process#{pid}: Wrong.')
-        print(f'Process#{pid}: Accuracy: {n_correct_samples}/{n_total_samples} = {n_correct_samples / n_total_samples}')
+
+        # Relaxed EM (ablation)
+        gold_for_relaxed = data_item['answer_text']
+        if isinstance(gold_for_relaxed, list) and len(gold_for_relaxed) == 2 and gold_for_relaxed[-1] == '###':
+            gold_for_relaxed = gold_for_relaxed[0]
+        r_score = relaxed_em(pred_answer, gold_for_relaxed)
+        result_dict[eid]['relaxed_score'] = r_score
+        n_relaxed_correct += r_score
+
+        strict_ok = score == 1
+        relaxed_ok = r_score == 1
+        tag = "Correct!" if strict_ok else ("Relaxed-Correct" if relaxed_ok else "Wrong.")
+        print(f'Process#{pid}: {tag}')
+        print(f'Process#{pid}: Strict  Accuracy: {n_correct_samples}/{n_total_samples} = {n_correct_samples / n_total_samples}')
+        print(f'Process#{pid}: Relaxed Accuracy: {n_relaxed_correct}/{n_total_samples} = {n_relaxed_correct / n_total_samples}')
 
     return result_dict
 
@@ -370,9 +381,13 @@ def main():
         pool.join()
 
     n_correct_samples = 0
+    n_relaxed_correct = 0
     for eid, item in result_dict.items():
         n_correct_samples += item['score']
-    print(f'Overall Accuracy: {n_correct_samples}/{len(result_dict)} = {n_correct_samples / len(result_dict)}')
+        n_relaxed_correct += item.get('relaxed_score', 0)
+    n = len(result_dict)
+    print(f'Strict  EM Accuracy: {n_correct_samples}/{n} = {n_correct_samples / n}')
+    print(f'Relaxed EM Accuracy: {n_relaxed_correct}/{n} = {n_relaxed_correct / n}')
 
     # Save program executions
     output_path = os.path.join(args.save_dir, args.output_program_execution_file)

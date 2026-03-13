@@ -18,6 +18,7 @@ from generation.generator import Generator
 from utils.utils import load_data_split, floatify_ans
 from utils.evaluator import Evaluator
 from utils.tatqa_metric import TaTQAEmAndF1
+from utils.relaxed_em import relaxed_em
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), "../")
 
@@ -34,7 +35,7 @@ def worker_execute(
     em_and_f1 = TaTQAEmAndF1()
 
     result_dict = dict()
-    n_total_samples, n_correct_samples = 0, 0
+    n_total_samples, n_correct_samples, n_relaxed_correct = 0, 0, 0
 
     for eid in g_eids:
         data_item = dataset[eid]
@@ -136,18 +137,28 @@ def worker_execute(
             result_dict[eid]['score'] = score
             n_correct_samples += score
 
+            # Relaxed EM (ablation)
+            gold_for_relaxed = data_item['answer_text']
+            if isinstance(gold_for_relaxed, list) and len(gold_for_relaxed) == 2 and gold_for_relaxed[-1] == '###':
+                gold_for_relaxed = gold_for_relaxed[0]
+            r_score = relaxed_em(pred_answer, gold_for_relaxed)
+            result_dict[eid]['relaxed_score'] = r_score
+            n_relaxed_correct += r_score
+
         except Exception as e:
             print(f"Process#{pid}: Error on eid {eid}: {e}")
             result_dict[eid]['pred_answer'] = '<error>'
             result_dict[eid]['score'] = 0
+            result_dict[eid]['relaxed_score'] = 0
 
         print(f'Process#{pid}: pred answer: {result_dict[eid].get("pred_answer", "N/A")}')
         print(f'Process#{pid}: gold answer: {data_item["answer_text"]}')
-        if result_dict[eid]['score'] == 1:
-            print(f'Process#{pid}: Correct!')
-        else:
-            print(f'Process#{pid}: Wrong.')
-        print(f'Process#{pid}: Accuracy: {n_correct_samples}/{n_total_samples} = {n_correct_samples / n_total_samples}')
+        strict_ok = result_dict[eid]['score'] == 1
+        relaxed_ok = result_dict[eid].get('relaxed_score', 0) == 1
+        tag = "Correct!" if strict_ok else ("Relaxed-Correct" if relaxed_ok else "Wrong.")
+        print(f'Process#{pid}: {tag}')
+        print(f'Process#{pid}: Strict  Accuracy: {n_correct_samples}/{n_total_samples} = {n_correct_samples / n_total_samples}')
+        print(f'Process#{pid}: Relaxed Accuracy: {n_relaxed_correct}/{n_total_samples} = {n_relaxed_correct / n_total_samples}')
 
     return result_dict
 
@@ -201,9 +212,13 @@ def main():
         pool.join()
 
     n_correct_samples = 0
+    n_relaxed_correct = 0
     for eid, item in result_dict.items():
         n_correct_samples += item['score']
-    print(f'Overall Accuracy: {n_correct_samples}/{len(result_dict)} = {n_correct_samples / len(result_dict)}')
+        n_relaxed_correct += item.get('relaxed_score', 0)
+    n = len(result_dict)
+    print(f'Strict  EM Accuracy: {n_correct_samples}/{n} = {n_correct_samples / n}')
+    print(f'Relaxed EM Accuracy: {n_relaxed_correct}/{n} = {n_relaxed_correct / n}')
 
     # Save results
     output_path = os.path.join(args.save_dir, args.output_file)
